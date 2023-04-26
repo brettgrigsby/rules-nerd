@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -22,7 +23,7 @@ docsearch = Chroma.from_texts(texts, embeddings, metadatas=[{"source": f"{i}-pl"
 chain = RetrievalQAWithSourcesChain.from_chain_type(OpenAI(temperature=0), chain_type="stuff", retriever=docsearch.as_retriever())
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": os.getenv("CLIENT_URL")}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/question', methods=['POST'])
